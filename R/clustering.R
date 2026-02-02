@@ -1,21 +1,15 @@
 #' Cluster a set of variables using distance function based on predictive measure
 #'
 #' @param X a data frame for a set of variables X
-#' @param perm T^q or T^q_bar
-#' @param perm.method permutation methods: sample / increasing / decreasing
+#' @param estim.method An optional character string specifying a method for estimating the directed dependence coefficient.
 #' @param mutual type B function or not
 #'
 #' @return a list for hierarchical clustering result
 #'
 #' @keywords internal
 clust.Tq <- function(X,
-                     perm = TRUE, perm.method = c("decreasing"),
+                     estim.method = c("copula"),
                      mutual = FALSE) {
-  Idx.Perm <- c("sample", "increasing", "decreasing", "full")
-
-  if (!perm.method %in% Idx.Perm) {
-    stop("'perm.method' should be one of 'sample', 'increasing', 'decreasing'.")
-  }
 
   df <- as.data.frame(X)
   dX <- length(df)
@@ -46,7 +40,7 @@ clust.Tq <- function(X,
     dist <- matrix(0, length(class), length(class))
     for (i in c(1:(length(class) - 1))) {
       for (j in c((i + 1):length(class))) {
-        dist[i, j] <- dist.Tq(df[, unlist(class[i])], df[, unlist(class[j])], perm = perm, perm.method = perm.method, mutual = mutual)
+        dist[i, j] <- dist.Tq(df[, unlist(class[i])], df[, unlist(class[j])], estim.method = estim.method, mutual = mutual)
       }
       for (j in c(1:i)) {
         dist[i, j] <- NA
@@ -77,11 +71,6 @@ clust.Tq <- function(X,
 #'
 #' @keywords internal
 clust.concor.M <- function(X, method = c("footrule")) {
-  Idx.Method <- c("kendall", "footrule")
-
-  if (!method %in% Idx.Method) {
-    stop("'method' should be one of 'kendall','footrule'")
-  }
 
   df <- as.data.frame(X)
   dX <- length(df)

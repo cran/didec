@@ -56,6 +56,7 @@ plot_dendrogram <- function(dend, num.cluster = num.cluster, linkage = FALSE,
 #'
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
+#' @importFrom ggplot2 annotate
 #' @importFrom ggplot2 geom_point
 #' @importFrom ggplot2 xlim
 #' @importFrom ggplot2 ylim
@@ -74,7 +75,7 @@ plot_Adiam.Msplit <- function(tradeoff,
   x_best_parti <- tradeoff$ad[which(tradeoff$dis == min(tradeoff$dis))] + 0.03
   y_best_parti <- tradeoff$ms[which(tradeoff$dis == min(tradeoff$dis))] + 0.02
   p <- ggplot(tradeoff[, 1:2], aes(tradeoff$ad, tradeoff$ms)) +
-    geom_point(pch = 20) +
+    geom_point(pch = 16) +
     xlim(0, 1) +
     ylim(0, 1) +
     labs(
@@ -83,9 +84,9 @@ plot_Adiam.Msplit <- function(tradeoff,
       title = main,
       subtitle = sub
     ) +
-    geom_segment(aes(xend = tradeoff$ad, yend = tradeoff$ms), x = 0, y = 0, linetype = "dotted") +
-    geom_segment(aes(xend = tradeoff$ad[which(tradeoff$dis == min(tradeoff$dis))], yend = tradeoff$ms[which(tradeoff$dis == min(tradeoff$dis))]), x = 0, y = 0, linetype = "dotted", colour = "#990000") +
-    geom_text(aes(x_best_parti, y_best_parti), label = n_best_parti, colour = "#990000", size = 3) +
+    annotate("segment",xend = tradeoff$ad, yend = tradeoff$ms, x = 0, y = 0, linetype = "dotted")+ #geom_segment(aes(xend = tradeoff$ad, yend = tradeoff$ms), x = 0, y = 0, linetype = "dotted") +
+    annotate("segment",xend = tradeoff$ad[which(tradeoff$dis == min(tradeoff$dis))], yend = tradeoff$ms[which(tradeoff$dis == min(tradeoff$dis))], x = 0, y = 0, linetype = "dotted", colour = "#990000")+ # geom_segment(aes(xend = tradeoff$ad[which(tradeoff$dis == min(tradeoff$dis))], yend = tradeoff$ms[which(tradeoff$dis == min(tradeoff$dis))]), x = 0, y = 0, linetype = "dotted", colour = "#990000") +
+    annotate("text",x_best_parti, y_best_parti,label = n_best_parti, colour = "#990000", size = 3)+ #geom_text(aes(x_best_parti, y_best_parti), label = n_best_parti, colour = "#990000", size = 3) +
     theme(
       axis.title.x = element_text(size = 7),
       axis.title.y = element_text(size = 7),
@@ -123,7 +124,7 @@ plot_Silhouette.coefficient <- function(Silhouette_Index,
   ASW <- Silhouette_Index$ASW
   n_best_parti <- partition[which(ASW == max(ASW))]
   p <- ggplot(Silhouette_Index[, 1:2], aes(partition, ASW)) +
-    geom_point(pch = 20) +
+    geom_point(pch = 16) +
     ylim(0, 1) +
     labs(
       x = "number of clusters",

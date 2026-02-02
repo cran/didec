@@ -4,7 +4,7 @@
 \alias{split}
 \title{Split of two classes of variables based on different distance function}
 \usage{
-split(X, Y, dist.func = "PD")
+split(X, Y, dist.func = "PD", estim.method = c("copula"))
 }
 \arguments{
 \item{X}{a data frame for a set of variables X}
@@ -12,6 +12,8 @@ split(X, Y, dist.func = "PD")
 \item{Y}{a data frame for a set of variables Y}
 
 \item{dist.func}{PD / MPD / kendall / footrule}
+
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient.}
 }
 \value{
 a value

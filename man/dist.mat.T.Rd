@@ -4,10 +4,12 @@
 \alias{dist.mat.T}
 \title{Distance Matrix Computation using distance function based on T^q}
 \usage{
-dist.mat.T(X, mutual = FALSE)
+dist.mat.T(X, estim.method = c("copula"), mutual = FALSE)
 }
 \arguments{
 \item{X}{a data frame for vector X}
+
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient.}
 
 \item{mutual}{use type B function (mutual perfect dependence) or not}
 }

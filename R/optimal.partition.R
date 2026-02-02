@@ -2,15 +2,13 @@
 #'
 #' @param X a data frame for a set of variables X
 #' @param dist.func PD / MPD / kendall / footrule
+#' @param estim.method An optional character string specifying a method for estimating the directed dependence coefficient.
 #'
 #' @return a value
 #'
 #' @keywords internal
-diam <- function(X, dist.func = "PD") {
-  Idx.Dist <- c("PD", "MPD", "kendall", "footrule")
-  if (!dist.func %in% Idx.Dist) {
-    stop("'dist.func' should be one of 'PD', 'MPD', 'kendall','footrule'.")
-  }
+diam <- function(X, dist.func = "PD", estim.method = c("copula")) {
+  
   df_X <- as.data.frame(X)
   n_X <- length(df_X)
   if (n_X == 1) {
@@ -18,10 +16,10 @@ diam <- function(X, dist.func = "PD") {
   }
   if (n_X != 1) {
     if (dist.func == "PD") {
-      diam <- min(1 - dist.mat.T(df_X))
+      diam <- min(1 - dist.mat.T(df_X, estim.method = estim.method))
     }
     if (dist.func == "MPD") {
-      diam <- min(1 - dist.mat.T(df_X, mutual = TRUE))
+      diam <- min(1 - dist.mat.T(df_X, estim.method = estim.method, mutual = TRUE))
     }
     if (dist.func == "kendall") {
       diam <- min(1 - dist.mat.concor(df_X, method = "kendall"))
@@ -39,15 +37,13 @@ diam <- function(X, dist.func = "PD") {
 #' @param X a data frame for a set of variables X
 #' @param Y a data frame for a set of variables Y
 #' @param dist.func PD / MPD / kendall / footrule
+#' @param estim.method An optional character string specifying a method for estimating the directed dependence coefficient.
 #'
 #' @return a value
 #'
 #' @keywords internal
-split <- function(X, Y, dist.func = "PD") {
-  Idx.Dist <- c("PD", "MPD", "kendall", "footrule")
-  if (!dist.func %in% Idx.Dist) {
-    stop("'dist.func' should be one of 'PD', 'MPD', 'kendall','footrule'.")
-  }
+split <- function(X, Y, dist.func = "PD", estim.method = c("copula")) {
+  
   df_X <- as.data.frame(X)
   df_Y <- as.data.frame(Y)
   n_X <- length(df_X)
@@ -60,10 +56,10 @@ split <- function(X, Y, dist.func = "PD") {
     for (i in 1L:n_X) {
       df <- as.data.frame(cbind(df_X[, i], df_Y))
       if (dist.func == "PD") {
-        sim <- c(sim, max(1 - dist.mat.T(df)[1L:n_Y]))
+        sim <- c(sim, max(1 - dist.mat.T(df, estim.method = estim.method)[1L:n_Y]))
       }
       if (dist.func == "MPD") {
-        sim <- c(sim, max(1 - dist.mat.T(df, mutual = T)[1L:n_Y]))
+        sim <- c(sim, max(1 - dist.mat.T(df, estim.method = estim.method, mutual = TRUE)[1L:n_Y]))
       }
       if (dist.func == "kendall") {
         sim <- c(sim, max(1 - dist.mat.concor(df, method = "kendall")[1L:n_Y]))
@@ -82,6 +78,7 @@ split <- function(X, Y, dist.func = "PD") {
 #' @param X a data frame for a set of variables X
 #' @param dend a dendrogramm
 #' @param dist.func PD / MPD / kendall / footrule
+#' @param estim.method An optional character string specifying a method for estimating the directed dependence coefficient.
 #'
 #' @return a data frame
 #'
@@ -89,11 +86,8 @@ split <- function(X, Y, dist.func = "PD") {
 #' @import dendextend
 #'
 #' @keywords internal
-Adiam.Msplit <- function(X, dend = dend, dist.func = "PD") {
-  Idx.Dist <- c("PD", "MPD", "kendall", "footrule")
-  if (!dist.func %in% Idx.Dist) {
-    stop("'dist.func' should be one of 'PD', 'MPD', 'kendall','footrule'.")
-  }
+Adiam.Msplit <- function(X, dend = dend, dist.func = "PD", estim.method = c("copula")) {
+
   if (!inherits(dend, "dendrogram")) {
     stop("'dend' should be a 'dendrogram'.")
   }
@@ -128,8 +122,8 @@ Adiam.Msplit <- function(X, dend = dend, dist.func = "PD") {
       c <- clust[[k]]
       cX <- df[, c]
       cY <- df[, -c]
-      d <- c(d, diam(cX, dist.func = dist.func))
-      s <- c(s, split(cX, cY, dist.func = dist.func))
+      d <- c(d, diam(cX, dist.func = dist.func, estim.method = estim.method))
+      s <- c(s, split(cX, cY, dist.func = dist.func, estim.method = estim.method))
     }
     ad_partition <- mean(d)
     ms_partition <- max(s)
@@ -150,25 +144,22 @@ Adiam.Msplit <- function(X, dend = dend, dist.func = "PD") {
 #' @param df a data frame for all variables
 #' @param partition a partition
 #' @param dist.func PD / MPD / kendall / footrule
+#' @param estim.method An optional character string specifying a method for estimating the directed dependence coefficient.
 #'
 #' @return a value for Silhouette
 #'
 #' @keywords internal
-Silhouette <- function(i, df, partition, dist.func = "PD") {
-  Idx.Dist <- c("PD", "MPD", "kendall", "footrule")
-  if (!dist.func %in% Idx.Dist) {
-    stop("'dist.func' should be one of 'PD', 'MPD', 'kendall','footrule'.")
-  }
+Silhouette <- function(i, df, partition, dist.func = "PD", estim.method = c("copula")) {
 
-  a_i <- function(obj, cls, dist.func = dist.func) {
+  a_i <- function(obj, cls, dist.func = dist.func, estim.method = estim.method) {
     if (!identical(obj, cls[, 1])) {
       stop("Error")
     }
     if (dist.func == "PD") {
-      a <- mean(dist.mat.T(cls)[1L:(length(cls) - 1)])
+      a <- mean(dist.mat.T(cls, estim.method = estim.method)[1L:(length(cls) - 1)])
     }
     if (dist.func == "MPD") {
-      a <- mean(dist.mat.T(cls, mutual = T)[1L:(length(cls) - 1)])
+      a <- mean(dist.mat.T(cls, estim.method = estim.method, mutual = TRUE)[1L:(length(cls) - 1)])
     }
     if (dist.func == "kendall") {
       a <- mean(dist.mat.concor(cls, method = "kendall")[1L:(length(cls) - 1)])
@@ -185,9 +176,9 @@ Silhouette <- function(i, df, partition, dist.func = "PD") {
       if (length(partition[[j]]) == 1) {
         return(0)
       }
-      ai <- a_i(df[, i], df[, c(i, partition[[j]][partition[[j]] != i])], dist.func = dist.func)
+      ai <- a_i(df[, i], df[, c(i, partition[[j]][partition[[j]] != i])], dist.func = dist.func, estim.method = estim.method)
     } else {
-      b <- c(b, a_i(df[, i], df[, c(i, partition[[j]])], dist.func = dist.func))
+      b <- c(b, a_i(df[, i], df[, c(i, partition[[j]])], dist.func = dist.func, estim.method = estim.method))
     }
   }
   bi <- min(b)
@@ -200,6 +191,7 @@ Silhouette <- function(i, df, partition, dist.func = "PD") {
 #' @param X a data frame for a set of variables X
 #' @param dend a dendrogramm
 #' @param dist.func PD / MPD / kendall / footrule
+#' @param estim.method An optional character string specifying a method for estimating the directed dependence coefficient.
 #'
 #' @return a data frame
 #'
@@ -207,11 +199,8 @@ Silhouette <- function(i, df, partition, dist.func = "PD") {
 #' @import dendextend
 #'
 #' @keywords internal
-Silhouette.coefficient <- function(X, dend, dist.func = "PD") {
-  Idx.Dist <- c("PD", "MPD", "kendall", "footrule")
-  if (!dist.func %in% Idx.Dist) {
-    stop("'dist.func' should be one of 'PD', 'MPD', 'kendall','footrule'.")
-  }
+Silhouette.coefficient <- function(X, dend, dist.func = "PD", estim.method = c("copula")) {
+  
   if (!inherits(dend, "dendrogram")) {
     stop("'dend' should be a 'dendrogram'.")
   }
@@ -239,7 +228,7 @@ Silhouette.coefficient <- function(X, dend, dist.func = "PD") {
     partition <- all_partition[i][[1]]
     s <- c()
     for (j in seq_along(X)) {
-      s <- c(s, Silhouette(j, X, partition, dist.func = dist.func))
+      s <- c(s, Silhouette(j, X, partition, dist.func = dist.func, estim.method = estim.method))
     }
     num <- c(num, length(partition))
     ASW <- c(ASW, mean(s))

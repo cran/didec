@@ -2,18 +2,16 @@
 % Please edit documentation in R/distance.function.R
 \name{dist.Tq}
 \alias{dist.Tq}
-\title{distance function based on T^q}
+\title{distance function based on T}
 \usage{
-dist.Tq(X, Y, perm = TRUE, perm.method = c("decreasing"), mutual = FALSE)
+dist.Tq(X, Y, estim.method = c("copula"), mutual = FALSE)
 }
 \arguments{
 \item{X}{a data frame for vector X}
 
 \item{Y}{a data frame for vector Y}
 
-\item{perm}{permuted version or not}
-
-\item{perm.method}{permutation methods: sample / increasing / decreasing / full}
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient.}
 
 \item{mutual}{use mutual perfect dependence or not}
 }
@@ -21,6 +19,6 @@ dist.Tq(X, Y, perm = TRUE, perm.method = c("decreasing"), mutual = FALSE)
 a value for distance between two vectors
 }
 \description{
-distance function based on T^q
+distance function based on T
 }
 \keyword{internal}

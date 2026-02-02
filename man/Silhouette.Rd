@@ -4,7 +4,7 @@
 \alias{Silhouette}
 \title{Silhouette value for the i. variable given variable partition}
 \usage{
-Silhouette(i, df, partition, dist.func = "PD")
+Silhouette(i, df, partition, dist.func = "PD", estim.method = c("copula"))
 }
 \arguments{
 \item{i}{the index of the variable}
@@ -14,6 +14,8 @@ Silhouette(i, df, partition, dist.func = "PD")
 \item{partition}{a partition}
 
 \item{dist.func}{PD / MPD / kendall / footrule}
+
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient.}
 }
 \value{
 a value for Silhouette

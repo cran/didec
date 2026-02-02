@@ -4,7 +4,7 @@
 \alias{Silhouette.coefficient}
 \title{Silhouette coefficients given a dendrogram}
 \usage{
-Silhouette.coefficient(X, dend, dist.func = "PD")
+Silhouette.coefficient(X, dend, dist.func = "PD", estim.method = c("copula"))
 }
 \arguments{
 \item{X}{a data frame for a set of variables X}
@@ -12,6 +12,8 @@ Silhouette.coefficient(X, dend, dist.func = "PD")
 \item{dend}{a dendrogramm}
 
 \item{dist.func}{PD / MPD / kendall / footrule}
+
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient.}
 }
 \value{
 a data frame

@@ -5,15 +5,16 @@
 \alias{bioclimatic}
 \title{Bioclimatic variables}
 \format{
-An object of class \code{data.frame} with 1862 rows and 14 columns.
+An object of class \code{data.frame} with 1862 rows and 19 columns.
 }
 \usage{
 bioclimatic
 }
 \description{
-A data set of bioclimatic variables for \eqn{n=1,862} locations homogeneously distributed over the global landmass from CHELSA("Climatologies at high resolution for the earth’s land surface areas").
+A data set of bioclimatic variables for \eqn{n=1,862} locations homogeneously distributed over the global landmass from CHELSA ("Climatologies at high resolution for the earth’s land surface areas").
 }
 \examples{
+data(bioclimatic)
 head(bioclimatic)
 }
 \references{

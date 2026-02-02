@@ -4,12 +4,14 @@
 \alias{diam}
 \title{Diameter of a class of variables based on different distance function}
 \usage{
-diam(X, dist.func = "PD")
+diam(X, dist.func = "PD", estim.method = c("copula"))
 }
 \arguments{
 \item{X}{a data frame for a set of variables X}
 
 \item{dist.func}{PD / MPD / kendall / footrule}
+
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient.}
 }
 \value{
 a value

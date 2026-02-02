@@ -7,10 +7,15 @@
 mfoci(
   X,
   Y,
-  pre.selected = NULL,
+  trans = FALSE,
+  trans.method = c("standardization"),
+  estim.method = c("copula"),
   perm = FALSE,
   perm.method = c("decreasing"),
-  autostop = TRUE
+  pre.selected = NULL,
+  select.method = c("forward"),
+  autostop = TRUE,
+  max.num = NULL
 )
 }
 \arguments{
@@ -18,36 +23,54 @@ mfoci(
 
 \item{Y}{A numeric matrix or data.frame/data.table. Contains the response vector Y.}
 
-\item{pre.selected}{An integer vector for indexing pre-selected predictor variables from X.}
+\item{trans}{A logical. If \code{TRUE} the inputs of X are standardized (transformed) before the variable selection.}
 
-\item{perm}{A logical. If \code{True} a version of \code{didec} is computed that takes into account the permutations (specified by \code{perm.method}) of the response variables.}
+\item{trans.method}{An optional character string specifying a method for data standardization. This must be one of the strings \code{"standardization"} (default), \code{"rank"} or \code{"rescaling"}.}
 
-\item{perm.method}{An optional character string specifying a method in \code{didec} for permuting the response variables. This must be one of the strings \code{"sample"}, \code{"increasing"}, \code{"decreasing"} (default) or \code{"full"}. The version \code{"full"} is invariant with respect to permutations of the response variables.}
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient \code{didec}. This must be one of the strings \code{"codec"} or \code{"copula"} (default).}
 
-\item{autostop}{A logical. If \code{True} the algorithm stops at the first non-increasing value of \code{didec}.}
+\item{perm}{A logical. If \code{TRUE} a version of \code{didec} that takes into account the permutations of the response variables is used in the variable selection algorithm.}
+
+\item{perm.method}{An optional character string specifying a method for permuting the response variables. This must be one of the strings \code{"sample"}, \code{"increasing"}, \code{"decreasing"} (default) or \code{"full"}.}
+
+\item{pre.selected}{An integer vector for indexing pre-selected components from predictor X.}
+
+\item{select.method}{An optional character string specifying a feature selection method. This must be one of the strings \code{"forward"} (default) or \code{"subset"}.}
+
+\item{autostop}{A logical. If \code{True} (default) the forward feature selection algorithm stops at the first non-increasing value of \code{didec}.}
+
+\item{max.num}{An integer for limiting the maximal number of selected variables if \code{select.method == "subset"}.}
 }
 \value{
-A data.frame listing the selected variables.
+A list containing:
+\describe{\item{features}{A vector listing all features in X;}
+\item{pre.selected.features}{A vector listing the pre.selected features in X if \code{pre.selected != NULL};}
+\item{selected.features}{A data.frame listing the selected and ranked variables and the corresponding values of the directed dependence coefficient if \code{select.method == "forward"}; A vector listing the selected features if \code{select.method == "subset"};}
+\item{valueT}{The values of the directed dependence coefficient if \code{select.method == "subset"}.}
+}
 }
 \description{
 A variable selection algorithm based on the directed dependence coefficient (\code{\link{didec}}).
 }
 \details{
-\code{mfoci} is a forward feature selection algorithm for multiple-outcome data that employs the directed dependence coefficient (\code{didec}) at each step.
-\code{mfoci} is proved to be consistent in the sense that the subset of predictor variables selected via \code{mfoci} is sufficient with high probability.
+\code{mfoci} involves a forward feature selection algorithm for multiple-outcome data that employs the directed dependence coefficient (\code{didec}) at each step.
 
 If \code{autostop == TRUE} the algorithm stops at the first non-increasing value of \code{didec}, thereby selecting a subset of variables.
-Otherwise, all predictor variables are ordered according to their predictive strength measured by \code{didec}.
+Otherwise, all predictor variables are ranked according to their predictive strength measured by \code{didec}.
+
+In addition to the forward feature selection algorithm, this function also provides a best subset selection, which can be accomplished by \code{select.method == "subset"}. 
+This method selects features by calculating the directed dependence coefficient of all possible feature combinations. 
+Note that the features selected by this method are not ordered.
 }
 \examples{
 library(didec)
-data("bioclimatic")
-X <- bioclimatic[, c(9:12)]
-Y <- bioclimatic[, c(1,8)]
+df <- as.data.frame(bioclimatic)
+X <- df[, c(9:12)]
+Y <- df[, c(1,8)]
 mfoci(X, Y, pre.selected = c(1, 3))
 }
 \references{
-J. Ansari, S. Fuchs, A simple extension of Azadkia & Chatterjee's rank correlation to multi-response vectors, Available at https://arxiv.org/abs/2212.01621, 2024.
+J. Ansari, S. Fuchs, A direct extension of Azadkia & Chatterjee's rank correlation to multi-response vectors, Available at \url{https://arxiv.org/abs/2212.01621}, 2025.
 }
 \author{
 Sebastian Fuchs, Jonathan Ansari, Yuping Wang

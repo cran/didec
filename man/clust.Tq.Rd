@@ -4,14 +4,12 @@
 \alias{clust.Tq}
 \title{Cluster a set of variables using distance function based on predictive measure}
 \usage{
-clust.Tq(X, perm = TRUE, perm.method = c("decreasing"), mutual = FALSE)
+clust.Tq(X, estim.method = c("copula"), mutual = FALSE)
 }
 \arguments{
 \item{X}{a data frame for a set of variables X}
 
-\item{perm}{T^q or T^q_bar}
-
-\item{perm.method}{permutation methods: sample / increasing / decreasing}
+\item{estim.method}{An optional character string specifying a method for estimating the directed dependence coefficient.}
 
 \item{mutual}{type B function or not}
 }
